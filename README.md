@@ -4,6 +4,8 @@ Filx is a command-line utility for password protecting files. Run `filx help` fo
 
 Filx uses 256-bit AES keys to encrypt files, generated via the given password.
 
+![Demo](./res/repo/demo.gif)
+
 ## Install
 
 1. Clone this repository
