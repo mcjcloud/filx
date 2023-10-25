@@ -18,7 +18,6 @@ var decCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			log.Fatalln("Missing filepath")
-			os.Exit(1)
 		}
 
 		path := filepath.Clean(args[0])
@@ -27,7 +26,6 @@ var decCmd = &cobra.Command{
 		ciphertext, err := os.ReadFile(path)
 		if err != nil {
 			log.Fatalf("Error reading file: %s\n", err.Error())
-			os.Exit(1)
 		}
 
 		fmt.Printf("Enter password: ")
@@ -35,13 +33,11 @@ var decCmd = &cobra.Command{
 		fmt.Println() // feed line
 		if err != nil {
 			log.Fatalf("Error reading password: %s\n", err.Error())
-			os.Exit(1)
 		}
 
 		cleartext, err := AesDecryptWithPassword(string(password), ciphertext)
 		if err != nil {
 			log.Fatalf("Error decrypting file: %s\n", err.Error())
-			os.Exit(1)
 		}
 
 		var filename string
@@ -55,7 +51,6 @@ var decCmd = &cobra.Command{
 		outfile := filepath.Join(filepath.Dir(path), filename)
 		if err := os.WriteFile(outfile, cleartext, 0600); err != nil {
 			log.Fatalf("Error writing decrypted output file: %s\n", err.Error())
-			os.Exit(1)
 		}
 
 		if delete {

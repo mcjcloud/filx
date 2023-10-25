@@ -17,7 +17,6 @@ var encCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			log.Fatalln("Missing filepath")
-			os.Exit(1)
 		}
 
 		path := filepath.Clean(args[0])
@@ -26,7 +25,6 @@ var encCmd = &cobra.Command{
 		cleartext, err := os.ReadFile(path)
 		if err != nil {
 			log.Fatalf("Error reading file: %s\n", err.Error())
-			os.Exit(1)
 		}
 
 		fmt.Printf("Enter a password: ")
@@ -34,19 +32,27 @@ var encCmd = &cobra.Command{
 		fmt.Println() // feed line
 		if err != nil {
 			log.Fatalf("Error reading password: %s\n", err.Error())
-			os.Exit(1)
+		}
+
+		fmt.Printf("Repeat password: ")
+		repeatedPw, err := term.ReadPassword(int(os.Stdin.Fd()))
+		fmt.Println()
+		if err != nil {
+			log.Fatalf("Error reading password: %s\n", err.Error())
+		}
+
+		if string(password) != string(repeatedPw) {
+			log.Fatalf("Passwords do not match.")
 		}
 
 		ciphertext, err := AesEncryptWithPassword(string(password), cleartext)
 		if err != nil {
 			log.Fatalf("Error encrypting file: %s\n", err.Error())
-			os.Exit(1)
 		}
 
 		outfile := filepath.Join(filepath.Dir(path), fmt.Sprintf("%s.enc", filepath.Base(path)))
 		if err := os.WriteFile(outfile, ciphertext, 0600); err != nil {
 			log.Fatalf("Error writing encrypted output file: %s\n", err.Error())
-			os.Exit(1)
 		}
 
 		if delete {
