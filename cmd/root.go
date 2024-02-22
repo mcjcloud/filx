@@ -6,7 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var delete bool
+var (
+	delete bool
+	print  bool
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

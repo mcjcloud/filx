@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -40,6 +41,16 @@ var decCmd = &cobra.Command{
 			log.Fatalf("Error decrypting file: %s\n", err.Error())
 		}
 
+		if print {
+			lessCmd := exec.Command("/usr/bin/less")
+			lessCmd.Stdin = strings.NewReader(string(cleartext))
+			lessCmd.Stdout = os.Stdout
+			if err := lessCmd.Run(); err != nil {
+				log.Fatalf("Error piping to less: %s\n", err.Error())
+			}
+			return
+		}
+
 		var filename string
 		base := filepath.Base(path)
 		if ext := filepath.Ext(path); ext == ".enc" && strings.Count(base, ".") > 1 {
@@ -71,4 +82,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	decCmd.Flags().BoolVarP(&delete, "delete", "d", false, "Delete the input file on success")
+	decCmd.Flags().BoolVarP(&print, "print", "p", false, "Print the decrypted file. No output file will be created")
 }
